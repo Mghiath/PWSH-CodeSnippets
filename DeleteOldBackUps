@@ -1,0 +1,13 @@
+# Change the value $oldTime in order to set a limit for files to be deleted.
+$oldTime = [int]6 # 6 days
+$YesterdayDate = $(Get-Date).AddDays(-1)
+$recentBackup = Get-ChildItem X:\Backup | where {$_.LastWriteTime -ge ($YesterdayDate)}
+if ($recentBackup -ne $null){
+foreach ($path in Get-Content "X:\pathList.txt") {
+	# Write information to host
+	Write-Host "Trying to delete files older than $oldTime days, in the folder $path" -ForegroundColor Green
+	# deleting the old files
+	Get-ChildItem $path -Recurse -Include "*.desieredextention", "*.desieredextention2", "*.desieredextention3" | WHERE {($_.CreationTime -le $(Get-Date).AddDays(-$oldTime))} | Remove-Item -Force
+}
+
+}
